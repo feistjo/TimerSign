@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <head>
+    <script type="text/javascript">
+      const ws = new WebSocket("ws://192.168.4.1/ws");
+
+      ws.onopen = function () {
+        alert("Connection opened");
+      };
+
+      ws.onclose = function () {
+        alert("Connection closed");
+      };
+
+      ws.onmessage = function (event) {
+        let data = JSON.parse(event.data);
+        document
+          .getElementById("timer")
+          .setAttribute("placeholder", data["timer"] / 1000);
+        document.getElementById("timer_remaining").innerHTML =
+          "Remaining Time:" + data["remaining_time"] / 1000;
+      };
+
+      window.addEventListener("load", onLoad);
+
+      function submitTimer(event) {
+        event.preventDefault();
+        if (document.getElementById("timer").valueAsNumber > 0) {
+          ws.send(
+            JSON.stringify({
+              new_time: document.getElementById("timer").valueAsNumber * 1000,
+            })
+          );
+        }
+      }
+
+      function onLoad(event) {
+        document
+          .getElementById("reset")
+          .addEventListener("click", function (event) {
+            ws.send(JSON.stringify({ reset: "reset" }));
+          });
+
+        document
+          .getElementById("timer_form")
+          .addEventListener("submit", submitTimer);
+      }
+    </script>
+  </head>
+
+  <body>
+    <form id="timer_form">
+      Set Timer (s), then hit enter:
+      <input type="number" min="0" step="any" id="timer" />
+    </form>
+    <div id="timer_remaining">Remaining Time:</div>
+    <button id="reset">Reset</button>
+  </body>
+</html>
