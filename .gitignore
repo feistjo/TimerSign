@@ -1,0 +1,6 @@
+TimerSign/.pio
+TimerSign/.vscode/.browse.c_cpp.db*
+TimerSign/.vscode/c_cpp_properties.json
+TimerSign/.vscode/launch.json
+TimerSign/.vscode/ipch
+TimerSign/src/wifi_auth.h
