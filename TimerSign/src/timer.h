@@ -16,7 +16,7 @@ public:
 
     void Reset() { end_time_ = get_millis_() + set_time_; }
 
-    uint32_t GetTimeRemaining() { return end_time_ - get_millis_(); }
+    int32_t GetTimeRemaining() { return end_time_ - get_millis_(); }
 
 private:
     uint32_t set_time_;

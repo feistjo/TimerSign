@@ -3,7 +3,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
   <head>
     <script type="text/javascript">
-      const ws = new WebSocket("ws://192.168.4.1/ws");
+      const ws = new WebSocket("ws://" + window.location.hostname + "/ws");
 
       ws.onopen = function () {
         alert("Connection opened");

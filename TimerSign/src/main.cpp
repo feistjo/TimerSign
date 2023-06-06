@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <TM1637Display.h>
 
+#include "config_mode_interpreter.h"
 #include "timer.h"
 #include "web_interface.h"
 
@@ -16,7 +17,9 @@ TM1637Display display(CLK, DIO);
 
 Timer timer(60 * 60 * 1000, []() { return millis(); });  // 60 minutes in milliseconds
 
-WebInterface web_interface("Timer", "thegarage2311", timer);
+WebInterface web_interface(/* "Timer", "thegarage2311", */ timer);
+
+ConfigModeInterpreter config_mode_interpreter(9, 7, 10000);
 
 void setup()
 {
@@ -37,11 +40,27 @@ void DisplayTime(uint32_t time, bool colon)
 
 void loop()
 {
+    web_interface.MaintainConnection();
     web_interface.notifyClients();
+
+    if (config_mode_interpreter.IsConfigMode())
+    {
+        IPAddress ip = WiFi.localIP();
+        Serial.println(ip);
+        display.showNumberHexEx(ip[0], 1 << 6, true, 2, 0);
+        display.showNumberHexEx(ip[1], 1 << 6, true, 2, 2);
+        delay(2000);
+        display.showNumberHexEx(ip[2], 1 << 6, true, 2, 0);
+        display.showNumberHexEx(ip[3], 1 << 6, true, 2, 2);
+        delay(2000);
+        return;
+    }
+
     if (digitalRead(DOOR_SENSOR) /*  || !digitalRead(PIR) */)
     {
         timer.Reset();
         display.clear();
+        delay(500);
         return;
     }
 
